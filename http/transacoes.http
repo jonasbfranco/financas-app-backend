@@ -1,0 +1,66 @@
+// Listar toda as transações
+GET http://localhost:3000/api/v1/transactions
+
+###
+
+// Gravar uma transação
+POST http://localhost:3000/api/v1/transactions
+content-type: application/json
+
+{
+    "usuario_id": 2,
+    "categoria_id": 11,
+    "tipo": "DESPESA",
+    "valor": 120.35,
+    "forma_pagamento": "CREDITO",
+    "data": "2026-09-10",
+    "status": "PENDENTE",
+    "descricao": "Mercado 10/09/2026"
+}
+
+###
+
+/*
+
+tipo
+---------------
+RECEITA
+DESPESA
+
+status
+---------------
+PENDENTE
+PAGO
+CANCELADO
+
+forma_pagamento
+---------------
+DINHEIRO
+PIX
+DEBITO
+CREDITO
+BOLETO
+TRANSFERENCIA
+
+*/
+
+###
+// Deletar uma transação
+DELETE http://localhost:3000/api/v1/transactions/11
+
+###
+
+// Atualizar uma transação
+PUT http://localhost:3000/api/v1/transactions/8
+content-type: application/json
+
+{
+    "usuario_id": 2,
+    "categoria_id": 11,
+    "tipo": "DESPESA",
+    "valor": 150.17,
+    "forma_pagamento": "CREDITO",
+    "data": "2026-09-02",
+    "status": "PENDENTE",
+    "descricao": "Mercado 02/09/2026"
+}

@@ -1,0 +1,31 @@
+// Exibir todas as categorias
+
+GET http://localhost:3000/api/v1/categoria
+
+###
+// Gravar uma categoria
+POST http://localhost:3000/api/v1/categoria
+content-type: application/json
+
+{
+    "nome": "gas_deletar",
+    "tipo": "despesa"
+}
+
+###
+// Deletar uma categoria
+DELETE http://localhost:3000/api/v1/categoria/14
+
+
+###
+// Atualizar uma categoria
+PUT http://localhost:3000/api/v1/categoria/2
+content-type: application/json
+
+{
+    "nome": "aluguel",
+    "tipo": "receita",
+    "ativo": "true"
+}
+
+###

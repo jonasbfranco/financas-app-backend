@@ -1,0 +1,35 @@
+// Exibir todas os usuarios
+
+GET http://localhost:3000/api/v1/usuario
+
+###
+// Gravar um usuario
+POST http://localhost:3000/api/v1/usuario
+content-type: application/json
+
+{
+    "nome": "teste do teste",
+    "login": "teste",
+    "email": "jonasbfranco@gmail.com",
+    "senha": "jonas@123"
+}
+
+###
+// Deletar uma usuario
+DELETE http://localhost:3000/api/v1/usuario/5
+
+
+###
+// Atualizar um usuario
+PUT http://localhost:3000/api/v1/usuario/2
+content-type: application/json
+
+{
+    "nome": "jonas baptista franco",
+    "login": "jonas",
+    "email": "jonasbfranco@gmail.com",
+    "ativo": "true",
+    "senha": "jonas@123"
+}
+
+###
