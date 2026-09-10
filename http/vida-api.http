@@ -3,3 +3,5 @@ GET http://localhost:3000/api/health
 
 ###
 
+GET https://financas-app-backend-one.vercel.app/api/health
+
