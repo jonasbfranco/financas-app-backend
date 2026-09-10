@@ -43,12 +43,22 @@ app.use("/api/v1/", transacoesRoutes);
 app.use("/api/v1/", usuariosRoutes);
 
 
-
+// 404
 app.use((req, res) => {
   res.status(404).json({ message: "Rota não encontrada." });
 });
 
-
+/* 
 app.listen(port, () => {
   console.log(`API executando em http://localhost:${port}`);
-});
+}); */
+
+// Inicialização local
+if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    console.log(`API executando em http://localhost:${port}`);
+  });
+}
+
+// Exporta para a Vercel
+export default app;
