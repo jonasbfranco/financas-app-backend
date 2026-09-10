@@ -3,6 +3,9 @@
 GET http://localhost:3000/api/v1/categoria
 
 ###
+GET https://financas-app-backend-one.vercel.app/api/v1/categoria
+
+###
 // Gravar uma categoria
 POST http://localhost:3000/api/v1/categoria
 content-type: application/json
