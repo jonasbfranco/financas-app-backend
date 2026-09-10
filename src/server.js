@@ -14,13 +14,14 @@ const app = express()
 const port = process.env.PORT || 3000;
 
 
-/* app.use(
+app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:3000"
+    origin: process.env.CORS_ORIGIN || 
+    "http://localhost:3000,http://localhost:5173,https://financas-app-backend-one.vercel.app"
   })
-); */
+);
 
-app.use(cors({ origin: '*' }));
+// app.use(cors({ origin: '*' }));
 
 
 app.use(express.json())
