@@ -31,6 +31,17 @@ router.post("/categoria", async (req, res) => {
   }
 
   try {
+    const exists = await pool.query(
+      `SELECT id FROM categorias
+       WHERE UPPER(nome) = UPPER($1)
+       LIMIT 1`,
+      [nome.trim().toUpperCase]
+    );
+
+    if (exists.rowCount) {
+      return res.status(409).json({ message: "Categoria já cadastrado." });
+    }
+
     const result = await pool.query(
             `INSERT INTO categorias (nome, tipo, ativo)
             VALUES ($1, $2, $3)
@@ -40,11 +51,11 @@ router.post("/categoria", async (req, res) => {
 
         // return res.status(201).json(result.rows[0]);
         return res.status(201).json({message: "Transação criada com sucesso", transacao: result.rows[0]});  
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Erro interno ao salvar os dados desta categoria." });
-  }
-});
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Erro interno ao salvar os dados desta categoria." });
+    }
+  });
 
 
 router.put("/categoria/:id", async (req, res) => {
