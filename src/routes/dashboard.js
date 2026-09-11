@@ -24,7 +24,7 @@ router.get("/stats", async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao carregar indicadores." });
-  }
+  } 
 });
 
 export default router;
