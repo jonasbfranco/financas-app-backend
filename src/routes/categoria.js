@@ -35,7 +35,7 @@ router.post("/categoria", async (req, res) => {
       `SELECT id FROM categorias
        WHERE UPPER(nome) = UPPER($1)
        LIMIT 1`,
-      [nome.trim().toUpperCase]
+      [nome.trim().toUpperCase()]
     );
 
     if (exists.rowCount) {

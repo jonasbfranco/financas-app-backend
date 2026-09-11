@@ -11,7 +11,7 @@ POST http://localhost:3000/api/v1/categoria
 content-type: application/json
 
 {
-    "nome": "gas_deletar",
+    "nome": "internet_apagar",
     "tipo": "despesa"
 }
 
