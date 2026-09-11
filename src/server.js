@@ -18,7 +18,11 @@ const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN
       .split(",")
       .map(origin => origin.trim())
-  : [];
+  : [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://seu-frontend.vercel.app"
+  ];
 
 app.use(
   cors({
