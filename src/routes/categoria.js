@@ -54,7 +54,7 @@ router.post("/categoria", async (req, res) => {
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Erro interno ao salvar os dados desta categoria." });
-    } 
+    }
   });
 
 
@@ -89,8 +89,6 @@ router.put("/categoria/:id", async (req, res) => {
   } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Erro ao atualizar categoria." });
-  } finally {
-     poll.release();
   }
 });
 
@@ -119,8 +117,6 @@ router.delete("/categoria/:id", async (req, res) => {
   } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Erro interno ao excluir os dados desta categoria." });
-  } finally {
-     poll.release();
   }
 });
 

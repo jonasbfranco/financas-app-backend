@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS transacoes (
     usuario_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
     categoria_id BIGINT REFERENCES categorias(id) ON DELETE SET NULL,
     tipo VARCHAR(100) NOT NULL,
-    valor NUMERIC(15,2) NOT NULL,
-    forma_pagamento VARCHAR(100) NOT NULL,
+    valor NUMERIC(15,2) NOT NULL DEFAULT 0,
+    forma_pagamento VARCHAR(100) NOT NULL DEFAULT 'CARTAO',
     data DATE NOT NULL,
     status VARCHAR(100) NOT NULL,
     descricao VARCHAR(255) NOT NULL,
@@ -36,6 +36,12 @@ CREATE TABLE IF NOT EXISTS usuarios (
 CREATE INDEX IF NOT EXISTS idx_usuarios_login_lower ON usuarios (LOWER(login));
 CREATE INDEX IF NOT EXISTS idx_usuarios_email_lower ON usuarios (LOWER(email));
 
+CREATE INDEX IF NOT EXISTS idx_categorias_nome_lower ON categorias (LOWER(nome));
+CREATE INDEX IF NOT EXISTS idx_categorias_tipo_lower ON categorias (LOWER(tipo));
+
+CREATE INDEX IF NOT EXISTS idx_transacoes_valor ON transacoes (valor);
+CREATE INDEX IF NOT EXISTS idx_transacoes_tipo_lower ON transacoes (LOWER(tipo));
+
 
 INSERT INTO categorias (nome, tipo)
 VALUES 
@@ -48,14 +54,24 @@ ON CONFLICT (nome) DO NOTHING;
 
 
 ALTER TABLE transacoes
-ADD COLUMN IF NOT EXISTS  forma_pagamento VARCHAR(100) NOT NULL;
+ADD COLUMN IF NOT EXISTS forma_pagamento VARCHAR(100) NOT NULL DEFAULT 'CARTAO';
 
 ALTER TABLE transacoes
-ADD COLUMN IF NOT EXISTS valor NUMERIC(15,2) NOT NULL;
+ADD COLUMN IF NOT EXISTS valor NUMERIC(15,2) NOT NULL DEFAULT 0;
+
+UPDATE transacoes
+SET valor = 0
+WHERE valor IS NULL;
 
 ALTER TABLE transacoes
 ALTER COLUMN valor TYPE NUMERIC(15,2)
 USING valor::NUMERIC(15,2);
+
+ALTER TABLE transacoes
+ALTER COLUMN valor SET DEFAULT 0;
+
+ALTER TABLE transacoes
+ALTER COLUMN valor SET NOT NULL;
 
 
 /*

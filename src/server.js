@@ -21,6 +21,7 @@ const allowedOrigins = process.env.CORS_ORIGIN
   : [
     "http://localhost:5173",
     "http://localhost:3000",
+    "https://financasjbf.netlify.app",
     "https://seu-frontend.vercel.app"
   ];
 
