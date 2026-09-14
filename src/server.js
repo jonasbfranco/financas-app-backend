@@ -48,10 +48,10 @@ app.use(express.json())
 
 
 // LOG TEMPORÁRIO
-app.use((req, res, next) => {
+/* app.use((req, res, next) => {
   console.log("REQUISIÇÃO:", req.method, req.originalUrl);
   next();
-});
+}); */
 
 
 // HEALTH
