@@ -9,3 +9,15 @@ content-type: application/json
     "senha": "jonas@123"
 }
 
+###
+
+// login vercel
+POST https://financas-app-backend.vercel.app/api/v1/login
+content-type: application/json
+
+{
+    "login": "jonas",
+    "senha": "jonas@123"
+}
+
+
