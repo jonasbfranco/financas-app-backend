@@ -7,6 +7,13 @@ import pool from "../config/db.js";
 const router = express.Router();
 
 
+router.get("/teste", (req, res) => {
+  res.json({
+    message: "AUTH ROUTES FUNCIONANDO"
+  });
+});
+
+
 router.post("/login", async (req, res) => {
   const { login, senha } = req.body;
 

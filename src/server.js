@@ -63,11 +63,15 @@ app.use("/api/v1/", transacoesRoutes);
 app.use("/api/v1/", usuariosRoutes);
 
 
-
 // 404
 app.use((req, res) => {
-  res.status(404).json({ message: "Rota não encontrada." });
+  console.log(`Rota não encontrada: ${req.method} ${req.originalUrl}`);
+
+  res.status(404).json({
+    message: "Rota não encontrada."
+  });
 });
+
 
 /* 
 app.listen(port, () => {
