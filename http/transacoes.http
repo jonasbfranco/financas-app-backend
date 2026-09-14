@@ -8,14 +8,14 @@ POST http://localhost:3000/api/v1/transactions
 content-type: application/json
 
 {
-    "usuario_id": 2,
-    "categoria_id": 11,
+    "usuario_id": 1,
+    "categoria_id": 5,
     "tipo": "DESPESA",
-    "valor": 120.35,
-    "forma_pagamento": "CREDITO",
+    "valor": 99.80,
+    "forma_pagamento": "PIX",
     "data": "2026-09-10",
     "status": "PENDENTE",
-    "descricao": "Mercado 10/09/2026"
+    "descricao": "Pgto Internet Claro 10/09/2026"
 }
 
 ###
@@ -55,7 +55,7 @@ PUT http://localhost:3000/api/v1/transactions/8
 content-type: application/json
 
 {
-    "usuario_id": 2,
+    "usuario_id": 1,
     "categoria_id": 11,
     "tipo": "DESPESA",
     "valor": 150.17,

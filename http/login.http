@@ -12,7 +12,7 @@ content-type: application/json
 ###
 
 // login vercel
-POST https://financas-app-backend.vercel.app/api/v1/login
+POST https://financas-app-backend-one.vercel.app/api/v1/login
 content-type: application/json
 
 {
@@ -24,7 +24,7 @@ content-type: application/json
 ###
 
 // teste vercel
-GET https://financas-app-backend.vercel.app/api/v1/teste
+GET https://financas-app-backend-one.vercel.app/api/v1/teste
 
 
 ###
