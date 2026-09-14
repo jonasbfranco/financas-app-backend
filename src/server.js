@@ -4,6 +4,7 @@ import cors from "cors";
 import pool from "./config/db.js";
 
 
+import authRoutes from "./routes/auth.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import categoriaRoutes from "./routes/categoria.js";
 import transacoesRoutes from "./routes/transacoes.js";
@@ -55,7 +56,7 @@ app.get("/api/health", async (req, res) => {
 });
 
 
-
+app.use("/api/v1/", authRoutes);
 app.use("/api/v1/", categoriaRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/", transacoesRoutes);
