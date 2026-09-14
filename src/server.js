@@ -56,11 +56,11 @@ app.get("/api/health", async (req, res) => {
 });
 
 
-app.use("/api/v1/", authRoutes);
-app.use("/api/v1/", categoriaRoutes);
+app.use("/api/v1", authRoutes);
+app.use("/api/v1", categoriaRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
-app.use("/api/v1/", transacoesRoutes);
-app.use("/api/v1/", usuariosRoutes);
+app.use("/api/v1", transacoesRoutes);
+app.use("/api/v1", usuariosRoutes);
 
 
 // 404

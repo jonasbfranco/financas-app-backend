@@ -21,3 +21,7 @@ content-type: application/json
 }
 
 
+###
+
+// teste vercel
+GET https://financas-app-backend.vercel.app/api/v1/teste
