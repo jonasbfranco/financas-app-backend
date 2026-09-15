@@ -12,11 +12,12 @@ router.get("/stats", async (req, res) => {
     const result = await pool.query(
       `SELECT
         (SELECT SUM(valor) FROM transacoes) AS saldo,
-        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'DESPESA' AND status = 'PENDENTE') AS depesas_pendentes,
-        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'RECEITA' AND status = 'PENDENTE') AS receitas_pendentes,
+        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'DESPESA' AND status = 'PENDENTE') AS despesas_previstas,
+        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'DESPESA' AND status = 'PAGO') AS despesas_pagas,
         (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'DESPESA') AS despesas,
-        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'RECEITA') AS receita,
-        (SELECT SUM(valor::numeric) FROM transacoes) AS debitos,
+        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'RECEITA' AND status = 'PENDENTE') AS receitas_previstas,
+        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'RECEITA' AND status = 'PAGO') AS receitas_pagas,
+        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'RECEITA') AS receitas,
         (SELECT COUNT(*)::int FROM transacoes) AS numero_transacoes`
     );
 

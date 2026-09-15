@@ -32,6 +32,7 @@ router.post('/transactions', async (req, res) => {
     // transactions.push(req.body)
 
     const { usuario_id, categoria_id, tipo, forma_pagamento, data, status, descricao } = req.body;
+
     let valor = Number(req.body.valor);
 
     if (!usuario_id || !categoria_id || !tipo || !valor || !forma_pagamento || !data || !status || !descricao) {
@@ -46,9 +47,9 @@ router.post('/transactions', async (req, res) => {
 
     valor = Number(valor);
 
-    if (tipo === "DESPESA") {
+    if (tipo === "DESPESA" || tipo === "despesa") {
         valor = -Math.abs(valor);
-    } else if (tipo === "RECEITA") {
+    } else if (tipo === "RECEITA" || tipo === "receita") {
         valor = Math.abs(valor);
     } else {
         return res.status(400).json({
@@ -93,9 +94,9 @@ router.put('/transactions/:id', async (req, res) => {
 
     valor = Number(valor);
 
-    if (tipo === "DESPESA") {
+    if (tipo === "DESPESA" || tipo === "despesa") {
         valor = -Math.abs(valor);
-    } else if (tipo === "RECEITA") {
+    } else if (tipo === "RECEITA" || tipo === "receita") {
         valor = Math.abs(valor);
     } else {
         return res.status(400).json({

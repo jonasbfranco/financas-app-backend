@@ -1,5 +1,8 @@
 -- Adminer 5.4.2 PostgreSQL 17.8 dump
 
+CREATE DATABASE "financas-app";
+\connect "financas-app";
+
 DROP TABLE IF EXISTS "categorias";
 DROP SEQUENCE IF EXISTS "public".categorias_id_seq;
 CREATE SEQUENCE "public".categorias_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;

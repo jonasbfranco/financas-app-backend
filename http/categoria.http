@@ -11,7 +11,7 @@ POST http://localhost:3000/api/v1/categoria
 content-type: application/json
 
 {
-    "nome": "internettttt",
+    "nome": "mercado",
     "tipo": "despesa",
     "ativo": "true"
 }
@@ -23,12 +23,12 @@ DELETE http://localhost:3000/api/v1/categoria/14
 
 ###
 // Atualizar uma categoria
-PUT http://localhost:3000/api/v1/categoria/35
+PUT http://localhost:3000/api/v1/categoria/55
 content-type: application/json
 
 {
-    "nome": "aluguel-testeeeeex ",
-    "tipo": "receita",
+    "nome": "INTERNET",
+    "tipo": "despesa",
     "ativo": "true"
 }
 

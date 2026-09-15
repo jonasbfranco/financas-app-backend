@@ -9,13 +9,13 @@ content-type: application/json
 
 {
     "usuario_id": 1,
-    "categoria_id": 5,
-    "tipo": "DESPESA",
-    "valor": 99.80,
-    "forma_pagamento": "PIX",
+    "categoria_id": 15,
+    "tipo": "despesa",
+    "valor": 300.00,
+    "forma_pagamento": "pix",
     "data": "2026-09-10",
-    "status": "PENDENTE",
-    "descricao": "Pgto Internet Claro 10/09/2026"
+    "status": "pago",
+    "descricao": "Pagto Van Pedro mes 09/26"
 }
 
 ###
@@ -55,12 +55,12 @@ PUT http://localhost:3000/api/v1/transactions/8
 content-type: application/json
 
 {
-    "usuario_id": 1,
-    "categoria_id": 11,
+    "usuario_id": "1",
+    "categoria_id": "16",
     "tipo": "DESPESA",
-    "valor": 150.17,
-    "forma_pagamento": "CREDITO",
-    "data": "2026-09-02",
-    "status": "PENDENTE",
-    "descricao": "Mercado 02/09/2026"
+    "valor": "131.63",
+    "forma_pagamento": "PIX",
+    "data": "2026-11-09T03:00:00.000Z",
+    "status": "PAGO",
+    "descricao": "Pgto iptu apto mes 09/26"
 }

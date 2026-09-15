@@ -52,6 +52,8 @@ VALUES
 ('INTERNET', 'DESPESA')
 ON CONFLICT (nome) DO NOTHING;
 
+INSERT INTO "usuarios" ("id", "nome", "login", "email", "senha_hash", "ativo", "criado_em", "atualizado_em") VALUES
+(1,	'JONAS BAPTISTA FRANCO',	'jonas',	'jonasbfranco@gmail.com',	'$2b$12$02pl6Pp5LPdULy6faAI32OxEkU/9kbK5Cc7Ksuib3Zno9v4m9ZcNm',	'1',	'2026-09-12 00:30:21.180646+00',	'2026-09-12 00:31:01.417018+00');
 
 ALTER TABLE transacoes
 ADD COLUMN IF NOT EXISTS forma_pagamento VARCHAR(100) NOT NULL DEFAULT 'CARTAO';
