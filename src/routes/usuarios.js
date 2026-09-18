@@ -57,6 +57,7 @@ router.post("/usuario", async (req, res) => {
             [nome.trim().toUpperCase(), login.trim().toLowerCase(), email.trim().toLowerCase(), senhaHash, ativo.trim().toUpperCase()]
         );
 
+
         // return res.status(201).json(result.rows[0]);
         return res.status(201).json({message: "Usuario criado com sucesso", transacao: result.rows[0]});  
   } catch (error) {
