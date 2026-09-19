@@ -24,15 +24,15 @@ DELETE http://localhost:3000/api/v1/usuario/5
 
 ###
 // Atualizar um usuario
-PUT http://localhost:3000/api/v1/usuario/2
+PUT http://localhost:3000/api/v1/usuario/1
 content-type: application/json
 
 {
-    "nome": "jonas baptista franco",
-    "login": "jonas",
+    "nome": "jonas baptista francoo",
+    "login": "jonass",
     "email": "jonasbfranco@gmail.com",
     "ativo": "true",
-    "senha": "jonas@123"
+    "senha": ""
 }
 
 ###

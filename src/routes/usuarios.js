@@ -1,7 +1,7 @@
 import express from 'express'
 import bcrypt from 'bcrypt';
 import pool from "../config/db.js";
-//import { auth, requirePermission } from "../middleware/auth";
+import { auth, requirePermission } from "../middleware/auth.js";
 
 //import { auth } from "../middleware/auth";
 
@@ -9,7 +9,7 @@ import pool from "../config/db.js";
 const router = express.Router();
 
 // router.get("/", auth, requirePermission("USUARIOS_GERENCIAR"), async (req, res) => {
-router.get("/usuario", async (req, res) => {
+router.get("/usuario", auth, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, nome, login, email, ativo, criado_em, atualizado_em
@@ -24,7 +24,7 @@ router.get("/usuario", async (req, res) => {
 });
 
 
-router.post("/usuario", async (req, res) => {
+router.post("/usuario", auth, async (req, res) => {
   
   const { nome, login, email, senha, ativo = "TRUE" } = req.body;
 
@@ -58,8 +58,8 @@ router.post("/usuario", async (req, res) => {
         );
 
 
-        // return res.status(201).json(result.rows[0]);
-        return res.status(201).json({message: "Usuario criado com sucesso", transacao: result.rows[0]});  
+    // return res.status(201).json(result.rows[0]);
+    return res.status(201).json({message: "Usuario criado com sucesso", transacao: result.rows[0]});  
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro interno ao salvar os dados deste usuario." });
@@ -67,48 +67,98 @@ router.post("/usuario", async (req, res) => {
 });
 
 
-router.put("/usuario/:id", async (req, res) => {
+router.put("/usuario/:id", auth, async (req, res) => {
   const { id } = req.params;
-  const { nome, login, email, ativo, senha } = req.body;
+  const { nome, login, email, senha } = req.body;
 
-  if (!id || !nome || !login || !email ) {
+
+  if (!id || !nome || !login || !email) {
       return res.status(400).json({ message: "Campos obrigatórios estão fantando." });
   }
 
-  if (senha.length < 8) {
-    return res.status(400).json({ message: "A senha deve possuir no mínimo 8 caracteres." });
+  
+  try {
+    const duplicate = await pool.query(
+      `SELECT id FROM usuarios
+       WHERE id <> $1
+         AND (LOWER(login) = LOWER($2) OR LOWER(email) = LOWER($3))
+       LIMIT 1`,
+      [id, login.trim(), email.trim()]
+    );
+
+    if (duplicate.rowCount) {
+      return res.status(409).json({ message: "Login ou e-mail já utilizado por outro usuário." });
+    }
+
+    
+    let result;
+
+
+    if (senha) {
+      if (senha.length < 8) {
+        return res.status(400).json({ message: "A senha deve possuir no mínimo 8 caracteres." });
+      }
+
+      const senhaHash = await bcrypt.hash(senha, 12);
+
+      result = await pool.query(
+        `UPDATE usuarios
+         SET nome=$1, login=$2, email=$3, senha_hash=$4, atualizado_em=NOW()
+         WHERE id=$5
+         RETURNING *`,
+        [nome.trim().toUpperCase(), login.trim().toLowerCase(), email.trim().toLowerCase(), senhaHash, id]
+      );
+    } else {
+      result = await pool.query(
+        `UPDATE usuarios
+         SET nome=$1, login=$2, email=$3, atualizado_em=NOW()
+         WHERE id=$4
+         RETURNING *`,
+        [nome.trim().toUpperCase(), login.trim().toLowerCase(), email.trim().toLowerCase(), id]
+      );
+
+    }
+
+    return res.status(200).json({ 
+      message: "Usuário atualizado com sucesso.",
+      //usuarioAtualizado: result.rows[0] 
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Erro ao atualizar usuário." });
   }
 
-    const senhaHash = await bcrypt.hash(senha, 12);
+});
+
+
+
+// router.patch("/:id/status", auth, requirePermission("USUARIOS_GERENCIAR"), async (req, res) => {
+router.patch("/usuario/:id/status", auth, async (req, res) => {
+  const { id } = req.params;
+  const { ativo } = req.body;
+
+  if (Number(id) === Number(req.user.id) && ativo === false) {
+    return res.status(400).json({ message: "Você não pode inativar seu próprio usuário." });
+  }
 
   try {
-      const result = await pool.query(
-          `UPDATE usuarios
-          SET nome=$1, login=$2, email=$3, ativo=$4, senha_hash=$5, atualizado_em=NOW()
-          WHERE id=$6
-          RETURNING *`,
-          [nome.trim().toUpperCase(), login.trim().toLowerCase(), email.trim().toLowerCase(), 
-            ativo.trim().toUpperCase(), senhaHash, id]
-      )
-
-      if (result.rowCount === 0) {
-          return res.status(404).json({ message: "Usuario não encontrada." });
-      }
-      
-      return res.status(200).json({
-          message: "Usuario atualizado com sucesso.",
-          usuarioAtualizado: result.rows[0]
-      });
-
-      
+    await pool.query(
+      `UPDATE usuarios SET ativo=$1, atualizado_em=NOW() WHERE id=$2`,
+      [Boolean(ativo), id]
+    );
+    return res.json({ message: "Status atualizado." });
   } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Erro ao atualizar usuario." });
+    console.error(error);
+    return res.status(500).json({ message: "Erro ao alterar status." });
   }
 });
 
 
-router.delete("/usuario/:id", async (req, res) => {
+
+
+
+router.delete("/usuario/:id", auth, async (req, res) => {
   const { id } = req.params;
   // return console.log(id)
 
