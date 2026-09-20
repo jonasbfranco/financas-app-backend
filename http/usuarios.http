@@ -1,6 +1,9 @@
 // Exibir todas os usuarios
 
 GET http://localhost:3000/api/v1/usuario
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwibG9naW4iOiJqb25hcyIsImlhdCI6MTc4OTg0MDQyNCwiZXhwIjoxNzg5ODY5MjI0fQ.AG_JAlKaQxCih6SW16Vey50EidXbibTH-i1DVUpFfCM
+
 
 ###
 GET https://financas-app-backend-one.vercel.app/api/v1/usuario
