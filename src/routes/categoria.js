@@ -1,6 +1,8 @@
 import express from 'express'
 import pool from "../config/db.js";
 
+import { auth, requirePermission } from "../middleware/auth.js";
+
 //import { auth } from "../middleware/auth";
 
 import "dotenv/config";
@@ -8,7 +10,7 @@ import "dotenv/config";
 const router = express.Router();
 
 // router.get("/stats", auth, async (req, res) => {
-router.get("/categoria", async (req, res) => {
+router.get("/categoria", auth, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT * FROM categorias ORDER BY nome`
@@ -22,7 +24,7 @@ router.get("/categoria", async (req, res) => {
 });
 
 
-router.post("/categoria", async (req, res) => {
+router.post("/categoria", auth, async (req, res) => {
   
   const { nome, tipo, ativo = "TRUE" } = req.body;
 
@@ -58,7 +60,7 @@ router.post("/categoria", async (req, res) => {
   });
 
 
-router.put("/categoria/:id", async (req, res) => {
+router.put("/categoria/:id", auth, async (req, res) => {
   const { id } = req.params;
   const { nome, tipo, ativo } = req.body;
 
@@ -93,7 +95,7 @@ router.put("/categoria/:id", async (req, res) => {
 });
 
 
-router.delete("/categoria/:id", async (req, res) => {
+router.delete("/categoria/:id", auth, async (req, res) => {
   const { id } = req.params;
   // return console.log(id)
 

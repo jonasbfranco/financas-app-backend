@@ -1,13 +1,15 @@
 import express from 'express'
 import pool from "../config/db.js";
 
-// import { auth } from "../middleware/auth";
+import { auth, requirePermission } from "../middleware/auth.js";
+
+//import { auth } from "../middleware/auth";
 
 import "dotenv/config";
 
 const router = express.Router();
 
-router.get("/stats", async (req, res) => {
+router.get("/stats", auth, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT

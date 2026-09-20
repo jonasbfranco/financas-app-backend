@@ -1,6 +1,8 @@
 import express from 'express'
 import pool from "../config/db.js";
 
+import { auth, requirePermission } from "../middleware/auth.js";
+
 // import { auth } from "../middleware/auth";
 
 import "dotenv/config";
@@ -8,7 +10,7 @@ import "dotenv/config";
 const router = express.Router();
 
 
-router.get('/transactions', async (req, res) => {
+router.get('/transactions', auth, async (req, res) => {
 
     try {
         const result = await pool.query(
@@ -26,7 +28,7 @@ router.get('/transactions', async (req, res) => {
 })
 
 
-router.post('/transactions', async (req, res) => {
+router.post('/transactions', auth, async (req, res) => {
     
     // console.log(req.body)
     // transactions.push(req.body)
@@ -77,7 +79,7 @@ router.post('/transactions', async (req, res) => {
 
 
 
-router.put('/transactions/:id', async (req, res) => {
+router.put('/transactions/:id', auth, async (req, res) => {
     const { id } = req.params;
     const { usuario_id, categoria_id, tipo, forma_pagamento, data, status, descricao } = req.body;
     let valor = Number(req.body.valor);
@@ -135,7 +137,7 @@ router.put('/transactions/:id', async (req, res) => {
 
 
 
-router.delete('/transactions/:id', async (req, res) => {
+router.delete('/transactions/:id', auth, async (req, res) => {
     const { id } = req.params;
     // console.log(id)
 
