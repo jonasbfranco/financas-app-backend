@@ -23,13 +23,14 @@ DELETE http://localhost:3000/api/v1/categoria/14
 
 ###
 // Atualizar uma categoria
-PUT http://localhost:3000/api/v1/categoria/55
+PUT http://localhost:3000/api/v1/categoria/25
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwibG9naW4iOiJqb25hcyIsImlhdCI6MTc5MDk2MjkyMiwiZXhwIjoxNzkwOTkxNzIyfQ.i3effJV6waGrIFvfWfkgLqMaY0cRy9-1p85YJKS3Sw8
 
 {
-    "nome": "INTERNET",
-    "tipo": "despesa",
-    "ativo": "true"
+  "nome": "ALUGUELL",
+  "tipo": "RECEITA",
+  "ativo": "true"
 }
 
 ###
