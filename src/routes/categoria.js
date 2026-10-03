@@ -95,6 +95,25 @@ router.put("/categoria/:id", auth, async (req, res) => {
 });
 
 
+
+router.patch("/categoria/:id/status", auth, async (req, res) => {
+  const { id } = req.params;
+  const { ativo } = req.body;
+
+  try {
+    await pool.query(
+      `UPDATE categorias SET ativo=$1, atualizado_em=NOW() WHERE id=$2`,
+      [Boolean(ativo), id]
+    );
+    return res.json({ message: "Status atualizado." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Erro ao alterar status." });
+  }
+});
+
+
+
 router.delete("/categoria/:id", auth, async (req, res) => {
   const { id } = req.params;
   // return console.log(id)
