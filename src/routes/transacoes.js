@@ -12,14 +12,34 @@ const router = express.Router();
 
 router.get('/transactions', auth, async (req, res) => {
 
+    const { mes } = req.query;
+
+    // Quando informado, mes deve estar no formato YYYY-MM.
+    if (mes && !/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) {
+        return res.status(400).json({
+            message: "O mês deve estar no formato YYYY-MM."
+        });
+    }
+
     try {
-        const result = await pool.query(
-            `SELECT * FROM transacoes ORDER BY data DESC`
-        )
-        
-        // const transacao = result.rowCount === 1 ? "transação" : "transações"
-        // return res.status(200).json({[transacao]: result.rows});
-        return res.status(200).json({ totalRegistros: result.rowCount, transacao: result.rows });
+        let query = `SELECT * FROM transacoes`;
+        const params = [];
+
+        if (mes) {
+            query += `
+                WHERE data >= $1::date
+                  AND data < ($1::date + INTERVAL '1 month')`;
+            params.push(`${mes}-01`);
+        }
+
+        query += ` ORDER BY data DESC, id DESC`;
+
+        const result = await pool.query(query, params);
+
+        return res.status(200).json({
+            totalRegistros: result.rowCount,
+            transacao: result.rows
+        });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Erro interno ao buscar dados das transações." });
