@@ -48,7 +48,7 @@ router.post("/categoria", auth, async (req, res) => {
             `INSERT INTO categorias (nome, tipo, ativo)
             VALUES ($1, $2, $3)
             RETURNING *`,
-            [nome.trim().toUpperCase(), tipo.trim().toUpperCase(), ativo.trim().toUpperCase()]
+            [nome.trim().toUpperCase(), tipo.trim().toUpperCase(), ativo]
         );
 
         // return res.status(201).json(result.rows[0]);
@@ -75,7 +75,7 @@ router.put("/categoria/:id", auth, async (req, res) => {
           SET nome=$1, tipo=$2, ativo=$3, atualizado_em=NOW()
           WHERE id=$4
           RETURNING *`,
-          [nome.trim().toUpperCase(), tipo.trim().toUpperCase(), ativo.trim().toUpperCase(), id]
+          [nome.trim().toUpperCase(), tipo.trim().toUpperCase(), ativo, id]
       )
 
       if (result.rowCount === 0) {
