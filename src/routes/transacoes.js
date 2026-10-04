@@ -13,6 +13,8 @@ const router = express.Router();
 router.get('/transactions', auth, async (req, res) => {
 
     const { mes } = req.query;
+    const pagina = Number.parseInt(req.query.page, 10) || 1;
+    const limite = Number.parseInt(req.query.limit, 10) || 20;
 
     // Quando informado, mes deve estar no formato YYYY-MM.
     if (mes && !/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) {
@@ -20,6 +22,14 @@ router.get('/transactions', auth, async (req, res) => {
             message: "O mês deve estar no formato YYYY-MM."
         });
     }
+
+    if (pagina < 1 || limite < 1 || limite > 100) {
+        return res.status(400).json({
+            message: "Parâmetros de paginação inválidos."
+        });
+    }
+
+    const offset = (pagina - 1) * limite;
 
     try {
         let query = `SELECT * FROM transacoes`;
@@ -32,21 +42,27 @@ router.get('/transactions', auth, async (req, res) => {
             params.push(`${mes}-01`);
         }
 
-        query += ` ORDER BY data DESC, id DESC`;
+        // Buscamos 1 registro a mais para saber se existe uma próxima página.
+        query += ` ORDER BY data DESC, id DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+        params.push(limite + 1, offset);
 
         const result = await pool.query(query, params);
+        const temMais = result.rows.length > limite;
+        const transacao = temMais ? result.rows.slice(0, limite) : result.rows;
 
         return res.status(200).json({
-            totalRegistros: result.rowCount,
-            transacao: result.rows
+            totalRegistros: transacao.length,
+            pagina,
+            limite,
+            temMais,
+            transacao
         });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Erro interno ao buscar dados das transações." });
     }
-    
-})
 
+})
 
 router.post('/transactions', auth, async (req, res) => {
     
