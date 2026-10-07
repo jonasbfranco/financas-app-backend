@@ -11,18 +11,32 @@ const router = express.Router();
 
 // router.get("/stats", auth, async (req, res) => {
 router.get("/categoria", auth, async (req, res) => {
+  const busca = String(req.query.busca || "").trim();
+  const pagina = Number.parseInt(req.query.page, 10) || 1;
+  const limite = Number.parseInt(req.query.limit, 10) || 20;
+  if (pagina < 1 || limite < 1 || limite > 100) {
+    return res.status(400).json({ message: "Parâmetros de paginação inválidos." });
+  }
   try {
+    const params = [];
+    let where = "";
+    if (busca) {
+      params.push(`%${busca}%`);
+      where = `WHERE nome ILIKE $1 OR tipo ILIKE $1 OR id::text ILIKE $1 OR ativo::text ILIKE $1`;
+    }
+    params.push(limite + 1, (pagina - 1) * limite);
     const result = await pool.query(
-      `SELECT * FROM categorias ORDER BY nome`
+      `SELECT * FROM categorias ${where} ORDER BY nome LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
     );
-
-    return res.status(200).json({ totalRegistros: result.rowCount, categoria: result.rows });
+    const temMais = result.rows.length > limite;
+    const categoria = temMais ? result.rows.slice(0, limite) : result.rows;
+    return res.status(200).json({ totalRegistros: categoria.length, pagina, limite, temMais, categoria });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro interno ao buscar dados das categorias." });
   }
 });
-
 
 router.post("/categoria", auth, async (req, res) => {
   

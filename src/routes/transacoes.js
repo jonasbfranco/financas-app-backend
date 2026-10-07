@@ -9,60 +9,64 @@ import "dotenv/config";
 
 const router = express.Router();
 
+function parseValor(valorInformado) {
+    if (typeof valorInformado === "number") return valorInformado;
+    if (valorInformado == null) return NaN;
+    const texto = String(valorInformado).trim().replace(/R\$/gi, "").replace(/\s/g, "");
+    if (!texto) return NaN;
+    const normalizado = texto.includes(",") ? texto.replace(/\./g, "").replace(",", ".") : texto;
+    if (!/^-?\d+(\.\d{1,2})?$/.test(normalizado)) return NaN;
+    return Number(normalizado);
+}
+
+
 
 router.get('/transactions', auth, async (req, res) => {
-
     const { mes } = req.query;
+    const busca = String(req.query.busca || "").trim();
     const pagina = Number.parseInt(req.query.page, 10) || 1;
     const limite = Number.parseInt(req.query.limit, 10) || 20;
 
-    // Quando informado, mes deve estar no formato YYYY-MM.
     if (mes && !/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) {
-        return res.status(400).json({
-            message: "O mês deve estar no formato YYYY-MM."
-        });
+        return res.status(400).json({ message: "O mês deve estar no formato YYYY-MM." });
     }
-
     if (pagina < 1 || limite < 1 || limite > 100) {
-        return res.status(400).json({
-            message: "Parâmetros de paginação inválidos."
-        });
+        return res.status(400).json({ message: "Parâmetros de paginação inválidos." });
     }
-
-    const offset = (pagina - 1) * limite;
 
     try {
-        let query = `SELECT * FROM transacoes`;
+        const conditions = [];
         const params = [];
-
         if (mes) {
-            query += `
-                WHERE data >= $1::date
-                  AND data < ($1::date + INTERVAL '1 month')`;
             params.push(`${mes}-01`);
+            conditions.push(`t.data >= $${params.length}::date AND t.data < ($${params.length}::date + INTERVAL '1 month')`);
         }
-
-        // Buscamos 1 registro a mais para saber se existe uma próxima página.
-        query += ` ORDER BY data DESC, id DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-        params.push(limite + 1, offset);
-
-        const result = await pool.query(query, params);
+        if (busca) {
+            params.push(`%${busca}%`);
+            const i = params.length;
+            conditions.push(`(
+                t.descricao ILIKE $${i} OR t.tipo ILIKE $${i} OR
+                t.forma_pagamento ILIKE $${i} OR t.status ILIKE $${i} OR
+                t.valor::text ILIKE $${i} OR c.nome ILIKE $${i} OR
+                to_char(t.data, 'DD/MM/YYYY') ILIKE $${i}
+            )`);
+        }
+        const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+        params.push(limite + 1, (pagina - 1) * limite);
+        const result = await pool.query(
+            `SELECT t.* FROM transacoes t LEFT JOIN categorias c ON c.id = t.categoria_id
+             ${where} ORDER BY t.data DESC, t.id DESC
+             LIMIT $${params.length - 1} OFFSET $${params.length}`,
+            params
+        );
         const temMais = result.rows.length > limite;
         const transacao = temMais ? result.rows.slice(0, limite) : result.rows;
-
-        return res.status(200).json({
-            totalRegistros: transacao.length,
-            pagina,
-            limite,
-            temMais,
-            transacao
-        });
+        return res.status(200).json({ totalRegistros: transacao.length, pagina, limite, temMais, transacao });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Erro interno ao buscar dados das transações." });
     }
-
-})
+});
 
 router.post('/transactions', auth, async (req, res) => {
     
@@ -71,7 +75,7 @@ router.post('/transactions', auth, async (req, res) => {
 
     const { usuario_id, categoria_id, tipo, forma_pagamento, data, status, descricao } = req.body;
 
-    let valor = Number(req.body.valor);
+    let valor = parseValor(req.body.valor);
 
     if (!usuario_id || !categoria_id || !tipo || !valor || !forma_pagamento || !data || !status || !descricao) {
         return res.status(400).json({ message: "Preencha todos os campos obrigatórios." });
@@ -118,7 +122,7 @@ router.post('/transactions', auth, async (req, res) => {
 router.put('/transactions/:id', auth, async (req, res) => {
     const { id } = req.params;
     const { usuario_id, categoria_id, tipo, forma_pagamento, data, status, descricao } = req.body;
-    let valor = Number(req.body.valor);
+    let valor = parseValor(req.body.valor);
 
     if (!id || !usuario_id ) {
         return res.status(400).json({ message: "Campos obrigatórios estão fantando." });

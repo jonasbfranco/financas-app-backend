@@ -10,24 +10,31 @@ import "dotenv/config";
 const router = express.Router();
 
 router.get("/stats", auth, async (req, res) => {
+  const { mes } = req.query;
+  if (mes && !/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) {
+    return res.status(400).json({ message: "O mês deve estar no formato YYYY-MM." });
+  }
   try {
+    const params = mes ? [`${mes}-01`] : [];
+    const where = mes ? "WHERE data >= $1::date AND data < ($1::date + INTERVAL '1 month')" : "";
     const result = await pool.query(
       `SELECT
-        (SELECT SUM(valor) FROM transacoes) AS saldo,
-        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'DESPESA' AND status = 'PENDENTE') AS despesas_previstas,
-        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'DESPESA' AND status = 'PAGO') AS despesas_pagas,
-        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'DESPESA') AS despesas,
-        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'RECEITA' AND status = 'PENDENTE') AS receitas_previstas,
-        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'RECEITA' AND status = 'PAGO') AS receitas_pagas,
-        (SELECT SUM(valor::numeric) FROM transacoes WHERE tipo = 'RECEITA') AS receitas,
-        (SELECT COUNT(*)::int FROM transacoes) AS numero_transacoes`
+        COALESCE(SUM(valor), 0) AS saldo,
+        COALESCE(SUM(valor) FILTER (WHERE tipo = 'DESPESA' AND status = 'PENDENTE'), 0) AS despesas_previstas,
+        COALESCE(SUM(valor) FILTER (WHERE tipo = 'DESPESA' AND status = 'PAGO'), 0) AS despesas_pagas,
+        COALESCE(SUM(valor) FILTER (WHERE tipo = 'DESPESA'), 0) AS despesas,
+        COALESCE(SUM(valor) FILTER (WHERE tipo = 'RECEITA' AND status = 'PENDENTE'), 0) AS receitas_previstas,
+        COALESCE(SUM(valor) FILTER (WHERE tipo = 'RECEITA' AND status = 'PAGO'), 0) AS receitas_pagas,
+        COALESCE(SUM(valor) FILTER (WHERE tipo = 'RECEITA'), 0) AS receitas,
+        COUNT(*)::int AS numero_transacoes
+       FROM transacoes ${where}`,
+      params
     );
-
     return res.json(result.rows[0]);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao carregar indicadores." });
-  } 
+  }
 });
 
 export default router;
